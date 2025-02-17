@@ -8,8 +8,8 @@ function Cabins() {
       <Row type="horizontal">
         <Heading as="h1">All cabins</Heading>
         <p>Filter / sort</p>
-        <CabinTable />
       </Row>
+      <CabinTable />
     </>
   );
 }
