@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import Input from "../../ui/Input";
 import FormRowVertical from "../../ui/FormRowVertical";
 
 function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  function handleSubmit() {}
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    // Handle form submission logic here
+  }
+
+  function handleEmailChange(event: ChangeEvent<HTMLInputElement>): void {
+    setEmail(event.target.value);
+  }
+
+  function handlePasswordChange(event: ChangeEvent<HTMLInputElement>): void {
+    setPassword(event.target.value);
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -16,10 +27,9 @@ function LoginForm() {
         <Input
           type="email"
           id="email"
-          // This makes this form better for password managers
           autoComplete="username"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
         />
       </FormRowVertical>
       <FormRowVertical label="Password">
@@ -28,11 +38,11 @@ function LoginForm() {
           id="password"
           autoComplete="current-password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large">Login</Button>
+        <Button>Login</Button>
       </FormRowVertical>
     </Form>
   );

@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
@@ -6,15 +6,21 @@ import Input from "../../ui/Input";
 
 import { useUpdateUser } from "./useUpdateUser";
 
+interface FormValues {
+  password: string;
+  passwordConfirm: string;
+}
+
 function UpdatePasswordForm() {
-  const { register, handleSubmit, formState, getValues, reset } = useForm();
+  const { register, handleSubmit, formState, getValues, reset } =
+    useForm<FormValues>();
   const { errors } = formState;
 
   const { updateUser, isUpdating } = useUpdateUser();
 
-  function onSubmit({ password }) {
+  const onSubmit: SubmitHandler<FormValues> = ({ password }) => {
     updateUser({ password }, { onSuccess: reset });
-  }
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
