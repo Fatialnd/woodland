@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -10,9 +10,20 @@ import FormRow from "../../ui/FormRow";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
 
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-function CreateCabinForm({ cabinToEdit = {} }) {
+interface CabinFormValues {
+  name: string;
+  maxCapacity: number;
+  regularPrice: number;
+  discount: number;
+  description: string;
+  image: FileList | string;
+}
+
+interface CreateCabinFormProps {
+  cabinToEdit?: Partial<CabinFormValues> & { id?: number };
+}
+
+function CreateCabinForm({ cabinToEdit = {} }: CreateCabinFormProps) {
   const { isCreating, createCabin } = useCreateCabin();
   const { isEditing, editCabin } = useEditCabin();
   const isWorking = isCreating || isEditing;
@@ -20,37 +31,38 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
 
-  const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: isEditSession ? editValues : {},
-  });
+  const { register, handleSubmit, reset, getValues, formState } =
+    useForm<CabinFormValues>({
+      defaultValues: isEditSession ? editValues : {},
+    });
   const { errors } = formState;
 
-  function onSubmit(data) {
+  const onSubmit: SubmitHandler<CabinFormValues> = (data) => {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
     if (isEditSession)
       editCabin(
-        { newCabinData: { ...data, image }, id: editId },
+        { newCabinData: { ...data, image }, id: editId! },
         {
-          onSuccess: (data) => {
+          onSuccess: () => {
             reset();
           },
         }
       );
     else
       createCabin(
-        { ...data, image: image },
+        { ...data, image },
         {
-          onSuccess: (data) => {
+          onSuccess: () => {
             reset();
           },
         }
       );
-  }
+  };
 
-  function onError(errors) {
-    // console.log(errors);
-  }
+  const onError = (errors: FieldErrors<CabinFormValues>) => {
+    // Handle error
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -115,7 +127,6 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         error={errors?.description?.message}
       >
         <Textarea
-          type="number"
           id="description"
           defaultValue=""
           disabled={isWorking}
@@ -135,8 +146,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         />
       </FormRow>
 
-      <FormRow>
-        {/* type is an HTML attribute! */}
+      <FormRow label="">
         <Button variation="secondary" type="reset">
           Cancel
         </Button>

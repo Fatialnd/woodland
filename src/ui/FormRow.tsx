@@ -1,4 +1,6 @@
+import React, { ReactNode } from "react";
 import styled from "styled-components";
+
 /* eslint-disable react/prop-types */
 const StyledFormRow = styled.div`
   display: grid;
@@ -36,10 +38,21 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function FormRow({ label, error, children }) {
+// Define types for FormRow props
+interface FormRowProps {
+  label: string;
+  error?: string;
+  children: ReactNode;
+}
+
+function FormRow({ label, error, children }: FormRowProps) {
   return (
     <StyledFormRow>
-      {label && <Label htmlFor={children.props.id}>{label}</Label>}
+      {label && (
+        <Label htmlFor={(children as React.ReactElement).props.id}>
+          {label}
+        </Label>
+      )}
       {children}
       {error && <Error>{error}</Error>}
     </StyledFormRow>

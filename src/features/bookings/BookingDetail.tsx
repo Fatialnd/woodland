@@ -16,17 +16,25 @@ const HeadingGroup = styled.div`
   align-items: center;
 `;
 
+type Booking = Record<string, unknown>;
+
+type Status = "unconfirmed" | "checked-in" | "checked-out";
+
+type StatusToTagName = {
+  [key in Status]: string;
+};
+
+const statusToTagName: StatusToTagName = {
+  unconfirmed: "blue",
+  "checked-in": "green",
+  "checked-out": "silver",
+};
+
 function BookingDetail() {
-  const booking = {};
-  const status = "checked-in";
+  const booking: Booking = {};
+  const status: Status = "checked-in";
 
   const moveBack = useMoveBack();
-
-  const statusToTagName = {
-    unconfirmed: "blue",
-    "checked-in": "green",
-    "checked-out": "silver",
-  };
 
   return (
     <>
