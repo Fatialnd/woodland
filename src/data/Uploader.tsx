@@ -8,62 +8,74 @@ import { bookings } from "./data-bookings";
 import { cabins } from "./data-cabins";
 import { guests } from "./data-guests";
 
-// const originalSettings = {
-//   minBookingLength: 3,
-//   maxBookingLength: 30,
-//   maxGuestsPerBooking: 10,
-//   breakfastPrice: 15,
-// };
+type Booking = {
+  cabinId: number;
+  guestId: number;
+  startDate: string;
+  endDate: string;
+  hasBreakfast: boolean;
+  numGuests: number;
+};
 
-async function deleteGuests() {
+type Cabin = {
+  id: number;
+  regularPrice: number;
+  discount: number;
+};
+
+type GuestId = { id: number };
+type CabinId = { id: number };
+
+async function deleteGuests(): Promise<void> {
   const { error } = await supabase.from("guests").delete().gt("id", 0);
   if (error) console.log(error.message);
 }
 
-async function deleteCabins() {
+async function deleteCabins(): Promise<void> {
   const { error } = await supabase.from("cabins").delete().gt("id", 0);
   if (error) console.log(error.message);
 }
 
-async function deleteBookings() {
+async function deleteBookings(): Promise<void> {
   const { error } = await supabase.from("bookings").delete().gt("id", 0);
   if (error) console.log(error.message);
 }
 
-async function createGuests() {
+async function createGuests(): Promise<void> {
   const { error } = await supabase.from("guests").insert(guests);
   if (error) console.log(error.message);
 }
 
-async function createCabins() {
+async function createCabins(): Promise<void> {
   const { error } = await supabase.from("cabins").insert(cabins);
   if (error) console.log(error.message);
 }
 
-async function createBookings() {
-  // Bookings need a guestId and a cabinId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and cabinIds, and then replace the original IDs in the booking data with the actual ones from the DB
+async function createBookings(): Promise<void> {
   const { data: guestsIds } = await supabase
     .from("guests")
     .select("id")
     .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
+  const allGuestIds = guestsIds?.map((guest: GuestId) => guest.id) || [];
   const { data: cabinsIds } = await supabase
     .from("cabins")
     .select("id")
     .order("id");
-  const allCabinIds = cabinsIds.map((cabin) => cabin.id);
+  const allCabinIds = cabinsIds?.map((cabin: CabinId) => cabin.id) || [];
 
-  const finalBookings = bookings.map((booking) => {
-    // Here relying on the order of cabins, as they don't have and ID yet
-    const cabin = cabins.at(booking.cabinId - 1);
+  const finalBookings = bookings.map((booking: Booking) => {
+    const cabin = cabins.at(booking.cabinId - 1) as Cabin | undefined;
+    if (!cabin) {
+      throw new Error(`Cabin with id ${booking.cabinId} not found`);
+    }
     const numNights = subtractDates(booking.endDate, booking.startDate);
     const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
     const extrasPrice = booking.hasBreakfast
       ? numNights * 15 * booking.numGuests
-      : 0; // hardcoded breakfast price
+      : 0;
     const totalPrice = cabinPrice + extrasPrice;
 
-    let status;
+    let status: "checked-out" | "unconfirmed" | "checked-in" = "unconfirmed";
     if (
       isPast(new Date(booking.endDate)) &&
       !isToday(new Date(booking.endDate))
@@ -101,24 +113,20 @@ async function createBookings() {
 }
 
 function Uploader() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  async function uploadAll() {
+  async function uploadAll(): Promise<void> {
     setIsLoading(true);
-    // Bookings need to be deleted FIRST
     await deleteBookings();
     await deleteGuests();
     await deleteCabins();
-
-    // Bookings need to be created LAST
     await createGuests();
     await createCabins();
     await createBookings();
-
     setIsLoading(false);
   }
 
-  async function uploadBookings() {
+  async function uploadBookings(): Promise<void> {
     setIsLoading(true);
     await deleteBookings();
     await createBookings();
