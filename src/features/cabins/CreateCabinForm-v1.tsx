@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { UseFormReturn, FieldValues } from "react-hook-form";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -9,30 +10,41 @@ import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
 import { useForm } from "react-hook-form";
-import { createCabin } from "../../services/apiCabins";
+import { createEditCabin } from "../../services/apiCabins";
 
-/* eslint-disable no-unused-vars */
+// Define TypeScript types for form data
+interface CabinFormData {
+  name: string;
+  maxCapacity: number;
+  regularPrice: number;
+  discount: number;
+  description: string;
+  image: FileList; // Assuming only one image will be uploaded
+}
+
 function CreateCabinForm() {
-  const { register, handleSubmit, reset, getValues, formState } = useForm();
+  // Use generic types for useForm to specify form data type
+  const { register, handleSubmit, reset, getValues, formState } =
+    useForm<CabinFormData>();
   const { errors } = formState;
 
   const queryClient = useQueryClient();
 
   const { mutate, isLoading: isCreating } = useMutation({
-    mutationFn: createCabin,
+    mutationFn: createEditCabin,
     onSuccess: () => {
       toast.success("New cabin successfully created");
       queryClient.invalidateQueries({ queryKey: ["cabins"] });
       reset();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: Error) => toast.error(err.message),
   });
 
-  function onSubmit(data) {
-    mutate({ ...data, image: data.image[0] });
+  function onSubmit(data: CabinFormData) {
+    mutate({ ...data, image: data.image[0] }); // Assuming the first image is the one you want
   }
 
-  function onError(errors) {
+  function onError(errors: FieldValues) {
     // console.log(errors);
   }
 
@@ -73,7 +85,7 @@ function CreateCabinForm() {
             required: "This field is required",
             min: {
               value: 1,
-              message: "Capacity should be at least 1",
+              message: "Price should be at least 1",
             },
           })}
         />
@@ -100,7 +112,7 @@ function CreateCabinForm() {
         error={errors?.description?.message}
       >
         <Textarea
-          type="number"
+          type="text"
           id="description"
           defaultValue=""
           disabled={isCreating}
@@ -120,7 +132,7 @@ function CreateCabinForm() {
         />
       </FormRow>
 
-      <FormRow>
+      <FormRow label="">
         {/* type is an HTML attribute! */}
         <Button variation="secondary" type="reset">
           Cancel

@@ -34,8 +34,36 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function BookingRow({
-  booking: {
+type Booking = {
+  id: number;
+  created_at: string;
+  startDate: string;
+  endDate: string;
+  numNights: number;
+  numGuests: number;
+  totalPrice: number;
+  status: "unconfirmed" | "checked-in" | "checked-out";
+  guests: {
+    fullName: string;
+    email: string;
+  };
+  cabins: {
+    name: string;
+  };
+};
+
+type BookingRowProps = {
+  booking: Booking;
+};
+
+const statusToTagName: Record<Booking["status"], string> = {
+  unconfirmed: "blue",
+  "checked-in": "green",
+  "checked-out": "silver",
+};
+
+function BookingRow({ booking }: BookingRowProps) {
+  const {
     id: bookingId,
     created_at,
     startDate,
@@ -46,13 +74,7 @@ function BookingRow({
     status,
     guests: { fullName: guestName, email },
     cabins: { name: cabinName },
-  },
-}) {
-  const statusToTagName = {
-    unconfirmed: "blue",
-    "checked-in": "green",
-    "checked-out": "silver",
-  };
+  } = booking;
 
   return (
     <Table.Row>

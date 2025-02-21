@@ -68,7 +68,7 @@ const Guest = styled.div`
   }
 `;
 
-const Price = styled.div`
+const Price = styled.div<{ isPaid: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -101,8 +101,36 @@ const Footer = styled.footer`
   text-align: right;
 `;
 
+interface Booking {
+  created_at: string;
+  startDate: string;
+  endDate: string;
+  numNights: number;
+  numGuests: number;
+  cabinPrice: number;
+  extrasPrice: number;
+  totalPrice: number;
+  hasBreakfast: boolean;
+  observations?: string;
+  isPaid: boolean;
+  guests: {
+    fullName: string;
+    email: string;
+    country: string;
+    countryFlag?: string;
+    nationalID: string;
+  };
+  cabins: {
+    name: string;
+  };
+}
+
+interface BookingDataBoxProps {
+  booking: Booking;
+}
+
 // A purely presentational component
-function BookingDataBox({ booking }) {
+function BookingDataBox({ booking }: BookingDataBoxProps) {
   const {
     created_at,
     startDate,
