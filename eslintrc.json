@@ -1,3 +1,11 @@
 {
-  "extends": "react-app"
+  "extends": ["react-app", "react-app/jest"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"]
+    }
+  ]
 }
