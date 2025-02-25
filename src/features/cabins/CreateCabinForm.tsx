@@ -44,16 +44,17 @@ function CreateCabinForm({
   const onSubmit: SubmitHandler<CabinFormValues> = (data) => {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
-    if (isEditSession)
+    if (isEditSession) {
       editCabin(
         { newCabinData: { ...data, image }, id: editId! },
         {
           onSuccess: () => {
             reset();
+            onCloseModal?.();
           },
         }
       );
-    else
+    } else
       createCabin(
         { ...data, image },
         {

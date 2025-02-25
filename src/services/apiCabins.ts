@@ -58,14 +58,12 @@ export async function createEditCabin(
     throw new Error("Cabin could not be created");
   }
 
-  // 2. Upload image
   if (hasImagePath) return data as Cabin;
 
   const { error: storageError } = await supabase.storage
     .from("cabin-images")
     .upload(imageName, newCabin.image as File);
 
-  // 3. Delete the cabin IF there was an error uploading image
   if (storageError) {
     await supabase
       .from("cabins")
@@ -85,14 +83,38 @@ interface DeleteCabinResponse {
   error: Error | null;
 }
 
-export async function deleteCabin(id: number): Promise<any> {
-  const { data, error }: DeleteCabinResponse = await supabase
-    .from("cabins")
-    .delete()
+export async function deleteCabin(id: number | undefined): Promise<any> {
+  if (!id) {
+    console.error("Error: Attempted to delete a cabin with an undefined ID.");
+    throw new Error("Invalid cabin ID.");
+  }
+
+  const { data: bookings, error: bookingsError } = await supabase
+    .from("bookings")
+    .select("*")
     .eq("id", id);
 
+  if (bookingsError) {
+    console.error("Error fetching bookings:", bookingsError.message);
+    throw new Error("Error fetching related bookings.");
+  }
+
+  if (bookings?.length > 0) {
+    const { error: deleteBookingsError } = await supabase
+      .from("bookings")
+      .delete()
+      .eq("cabinId", id);
+
+    if (deleteBookingsError) {
+      console.error("Error deleting bookings:", deleteBookingsError.message);
+      throw new Error("Error deleting related bookings.");
+    }
+  }
+
+  const { data, error } = await supabase.from("cabins").delete().eq("id", id);
+
   if (error) {
-    console.error(error);
+    console.error("Error deleting cabin:", error.message);
     throw new Error("Cabin could not be deleted");
   }
 

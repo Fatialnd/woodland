@@ -1,11 +1,9 @@
-import {
+import React, {
   cloneElement,
   ReactNode,
   useContext,
   useState,
   createContext,
-  useEffect,
-  useRef,
 } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
@@ -74,7 +72,7 @@ function Modal({ children }: ModalProviderProps) {
   const [openName, setOpenName] = useState("");
 
   const close = () => setOpenName("");
-  const open = setOpenName;
+  const open = (name: string) => setOpenName(() => name);
 
   return (
     <ModalContext.Provider value={{ open, close, openName }}>
@@ -95,9 +93,11 @@ function Open({ children, opens: openWindowName }: OpenProps) {
   }
   const { open } = context;
 
-  return cloneElement(children as React.ReactElement, {
-    onClick: () => open(openWindowName),
-  });
+  return React.isValidElement(children)
+    ? cloneElement(children as React.ReactElement, {
+        onClick: () => open(openWindowName),
+      })
+    : null;
 }
 
 interface ModalProps {
@@ -113,22 +113,26 @@ function Window({ children, name }: ModalProps) {
   const { openName, close } = context;
   const { ref } = useOutsideClick(close);
   if (name !== openName) return null;
-  return createPortal(
-    <Overlay>
-      <StyledModal ref={ref as React.RefObject<HTMLDivElement>}>
-        <Button onClick={close}>
-          <HiXMark />
-        </Button>
-        <div>
-          {children &&
-            cloneElement(children as React.ReactElement, {
-              onCloseModal: close,
-            })}
-        </div>
-      </StyledModal>
-    </Overlay>,
-    document.body
-  );
+
+  return typeof document !== "undefined"
+    ? createPortal(
+        <Overlay>
+          <StyledModal ref={ref as React.RefObject<HTMLDivElement>}>
+            <Button onClick={close}>
+              <HiXMark />
+            </Button>
+            <div>
+              {React.isValidElement(children)
+                ? cloneElement(children as React.ReactElement<any>, {
+                    onCloseModal: close,
+                  })
+                : null}
+            </div>
+          </StyledModal>
+        </Overlay>,
+        document.body
+      )
+    : null;
 }
 
 Modal.Open = Open;
