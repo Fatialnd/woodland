@@ -111,7 +111,7 @@ function Window({ children, name }: ModalProps) {
     throw new Error("Window must be used within a ModalProvider");
   }
   const { openName, close } = context;
-  const { ref } = useOutsideClick(close);
+  const ref = useOutsideClick(close);
   if (name !== openName) return null;
 
   return typeof document !== "undefined"
