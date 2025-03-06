@@ -1,9 +1,19 @@
+import React from "react";
 import BookingRow from "./BookingRow";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
 
-function BookingTable() {
-  const bookings = [];
+interface Booking {
+  id: string;
+  cabin: string;
+  guest: string;
+  dates: string;
+  status: string;
+  amount: string;
+}
+
+const BookingTable: React.FC = () => {
+  const bookings: Booking[] = [];
 
   return (
     <Menus>
@@ -19,13 +29,13 @@ function BookingTable() {
 
         <Table.Body
           data={bookings}
-          render={(booking) => (
+          render={(booking: Booking) => (
             <BookingRow key={booking.id} booking={booking} />
           )}
         />
       </Table>
     </Menus>
   );
-}
+};
 
 export default BookingTable;
