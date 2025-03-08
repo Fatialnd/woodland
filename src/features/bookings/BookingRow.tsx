@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { format, isToday } from "date-fns";
 
 import Tag from "../../ui/Tag";
+import type { Booking } from "./types";
 import Table from "../../ui/Table";
 
 import { formatCurrency } from "../../utils/helpers";
@@ -34,51 +35,38 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-type Booking = {
-  id: number;
-  created_at: string;
-  startDate: string;
-  endDate: string;
-  numNights: number;
-  numGuests: number;
-  totalPrice: number;
-  status: "unconfirmed" | "checked-in" | "checked-out";
-  guests: {
-    fullName: string;
-    email: string;
-  };
-  cabins: {
-    name: string;
-  };
-};
-
-type BookingRowProps = {
-  booking: Booking;
-};
-
 const statusToTagName: Record<Booking["status"], string> = {
   unconfirmed: "blue",
   "checked-in": "green",
   "checked-out": "silver",
+  cancelled: "red",
 };
+
+interface BookingRowProps {
+  booking: Booking;
+}
 
 function BookingRow({ booking }: BookingRowProps) {
   const {
     id: bookingId,
-    created_at,
     startDate,
     endDate,
     numNights,
     numGuests,
     totalPrice,
     status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
+    guests = {}, // Default to empty object if guests is undefined
+    cabins = {}, // Default to empty object if cabins is undefined
   } = booking;
+
+  // Destructure safely, using default values if guests or cabins are undefined
+  const { fullName: guestName = "Unknown Guest", email = "No email" } =
+    guests || {};
+  const { name: cabinName = "Unknown Cabin" } = cabins || {};
 
   return (
     <Table.Row>
-      <Cabin>{cabinName}</Cabin>
+      <Cabin>{bookingId}</Cabin>
 
       <Stacked>
         <span>{guestName}</span>
@@ -98,7 +86,9 @@ function BookingRow({ booking }: BookingRowProps) {
         </span>
       </Stacked>
 
-      <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+      <Tag type="status" color={statusToTagName[status] || "grey"}>
+        {status.replace("-", " ")}
+      </Tag>
 
       <Amount>{formatCurrency(totalPrice)}</Amount>
     </Table.Row>

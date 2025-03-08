@@ -1,14 +1,24 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
-export async function getBookings() {
-  const { data, error } = await supabase.from("bookings").select("*");
+export async function getBookings(): Promise<Booking[]> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(
+      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)"
+    );
 
-  if (error) {
+  if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not be created");
+    throw new Error("Bookings could not be loaded");
   }
-  return data;
+
+  return data.map((booking) => ({
+    ...booking,
+    extrasPrice: booking.extrasPrice ?? 0, // Ensure it's never null
+    cabins: booking.cabins?.[0] ?? null, // Take the first item
+    guests: booking.guests?.[0] ?? null, // Take the first item
+  })) as Booking[];
 }
 
 // Interfaces
@@ -27,7 +37,7 @@ export interface Guest {
 }
 
 export interface Booking {
-  id: number;
+  id: string;
   startDate: string;
   endDate: string;
   created_at: string;
@@ -36,9 +46,9 @@ export interface Booking {
   status: "unconfirmed" | "checked-in" | "checked-out" | "cancelled";
   cabins?: Cabin;
   guests?: Guest;
-  // Add other booking fields as needed
+  numNights: number;
+  numGuests: number;
 }
-
 export type UpdateBookingData = Partial<Omit<Booking, "id">>;
 
 // Get a single booking by ID
