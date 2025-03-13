@@ -2,18 +2,17 @@ import React from "react";
 import BookingRow from "./BookingRow";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
-
-interface Booking {
-  id: string;
-  cabin: string;
-  guest: string;
-  dates: string;
-  status: string;
-  amount: string;
-}
+import Empty from "../../ui/Empty";
+import Spinner from "../../ui/Spinner";
+import { useBookings } from "./useBookings";
+import type { Booking } from "./types";
 
 const BookingTable: React.FC = () => {
-  const bookings: Booking[] = [];
+  const { bookings, isLoading } = useBookings();
+
+  if (isLoading) return <Spinner />;
+  if (!bookings || bookings.length === 0)
+    return <Empty resourceName="bookings" />;
 
   return (
     <Menus>
