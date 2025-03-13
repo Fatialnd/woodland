@@ -35,13 +35,6 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-const statusToTagName: Record<Booking["status"], string> = {
-  unconfirmed: "blue",
-  "checked-in": "green",
-  "checked-out": "silver",
-  cancelled: "red",
-};
-
 interface BookingRowProps {
   booking: Booking;
 }
@@ -55,18 +48,24 @@ function BookingRow({ booking }: BookingRowProps) {
     numGuests,
     totalPrice,
     status,
-    guests = {}, // Default to empty object if guests is undefined
-    cabins = {}, // Default to empty object if cabins is undefined
+    guests,
+    cabins,
   } = booking;
 
-  // Destructure safely, using default values if guests or cabins are undefined
-  const { fullName: guestName = "Unknown Guest", email = "No email" } =
-    guests || {};
-  const { name: cabinName = "Unknown Cabin" } = cabins || {};
+  const guestName = guests ? guests.fullName : "Unknown Guest";
+  const email = guests ? guests.email : "No email";
+  const cabinName = cabins ? cabins.name : "Unknown Cabin";
+
+  const statusToTagName: Record<Booking["status"], string> = {
+    unconfirmed: "blue",
+    "checked-in": "green",
+    "checked-out": "silver",
+    cancelled: "red",
+  };
 
   return (
     <Table.Row>
-      <Cabin>{bookingId}</Cabin>
+      <Cabin>{cabinName}</Cabin>
 
       <Stacked>
         <span>{guestName}</span>

@@ -1,5 +1,6 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
+import { Booking, UpdateBookingData } from "../features/bookings/types";
 
 export async function getBookings(): Promise<Booking[]> {
   const { data, error } = await supabase
@@ -15,43 +16,20 @@ export async function getBookings(): Promise<Booking[]> {
 
   return data.map((booking) => ({
     ...booking,
-    extrasPrice: booking.extrasPrice ?? 0, // Ensure it's never null
-    cabins: booking.cabins?.[0] ?? null, // Take the first item
-    guests: booking.guests?.[0] ?? null, // Take the first item
-  })) as Booking[];
+    extrasPrice: booking.extrasPrice ?? 0,
+    cabins: booking.cabins
+      ? Array.isArray(booking.cabins)
+        ? booking.cabins[0]
+        : booking.cabins
+      : null,
+    guests: booking.guests
+      ? Array.isArray(booking.guests)
+        ? booking.guests[0]
+        : booking.guests
+      : null,
+  }));
 }
 
-// Interfaces
-export interface Cabin {
-  id: number;
-  name: string;
-  // Add other cabin fields as needed
-}
-
-export interface Guest {
-  id: number;
-  fullName: string;
-  nationality?: string;
-  countryFlag?: string;
-  // Add other guest fields as needed
-}
-
-export interface Booking {
-  id: string;
-  startDate: string;
-  endDate: string;
-  created_at: string;
-  totalPrice: number;
-  extrasPrice: number;
-  status: "unconfirmed" | "checked-in" | "checked-out" | "cancelled";
-  cabins?: Cabin;
-  guests?: Guest;
-  numNights: number;
-  numGuests: number;
-}
-export type UpdateBookingData = Partial<Omit<Booking, "id">>;
-
-// Get a single booking by ID
 export async function getBooking(id: number): Promise<Booking> {
   const { data, error } = await supabase
     .from("bookings")
@@ -64,10 +42,9 @@ export async function getBooking(id: number): Promise<Booking> {
     throw new Error("Booking not found");
   }
 
-  return data as Booking;
+  return data;
 }
 
-// Get all bookings created after a specific date
 export async function getBookingsAfterDate(
   date: string
 ): Promise<{ created_at: string; totalPrice: number; extrasPrice: number }[]> {
@@ -79,13 +56,12 @@ export async function getBookingsAfterDate(
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not get loaded");
+    throw new Error("Bookings could not be loaded");
   }
 
   return data;
 }
 
-// Get all stays (bookings) that start after a specific date
 export async function getStaysAfterDate(date: string): Promise<Booking[]> {
   const { data, error } = await supabase
     .from("bookings")
@@ -95,13 +71,12 @@ export async function getStaysAfterDate(date: string): Promise<Booking[]> {
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not get loaded");
+    throw new Error("Bookings could not be loaded");
   }
 
-  return data as Booking[];
+  return data;
 }
 
-// Get stays with check-in or check-out today
 export async function getStaysTodayActivity(): Promise<Booking[]> {
   const { data, error } = await supabase
     .from("bookings")
@@ -113,13 +88,12 @@ export async function getStaysTodayActivity(): Promise<Booking[]> {
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not get loaded");
+    throw new Error("Bookings could not be loaded");
   }
 
-  return data as Booking[];
+  return data;
 }
 
-// Update a booking by ID
 export async function updateBooking(
   id: number,
   obj: UpdateBookingData
@@ -136,10 +110,9 @@ export async function updateBooking(
     throw new Error("Booking could not be updated");
   }
 
-  return data as Booking;
+  return data;
 }
 
-// Delete a booking by ID
 export async function deleteBooking(id: number): Promise<null> {
   const { error } = await supabase.from("bookings").delete().eq("id", id);
 

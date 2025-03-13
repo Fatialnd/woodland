@@ -11,20 +11,18 @@ export interface Guest {
   countryFlag?: string;
 }
 
-export type Booking = {
+export interface Booking {
   id: string;
-  created_at: string;
   startDate: string;
   endDate: string;
+  created_at: string;
+  totalPrice: number;
+  extrasPrice: number;
+  status: "unconfirmed" | "checked-in" | "checked-out" | "cancelled";
+  cabins?: Cabin | null;
+  guests?: Guest | null;
   numNights: number;
   numGuests: number;
-  totalPrice: number;
-  status: "unconfirmed" | "checked-in" | "checked-out" | "cancelled";
-  guests?: {
-    fullName?: string;
-    email?: string;
-  };
-  cabins?: {
-    name?: string;
-  };
-};
+}
+
+export type UpdateBookingData = Partial<Omit<Booking, "id">>;
