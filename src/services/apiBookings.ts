@@ -2,13 +2,23 @@ import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { Booking, UpdateBookingData } from "../features/bookings/types";
 
-export async function getBookings(): Promise<Booking[]> {
-  const { data, error } = await supabase
+export async function getBookings({
+  filter,
+  SortBy,
+}: {
+  filter: any;
+  SortBy: any;
+}): Promise<Booking[]> {
+  let query = supabase
     .from("bookings")
     .select(
       "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)"
     );
 
+  if (filter !== null)
+    query = query.eq(filter.field as string, filter.value as string);
+
+  const { data, error } = await query;
   if (error || !data) {
     console.error(error);
     throw new Error("Bookings could not be loaded");
