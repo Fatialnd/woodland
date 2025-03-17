@@ -85,7 +85,7 @@ function BookingRow({ booking }: BookingRowProps) {
         </span>
       </Stacked>
 
-      <Tag type="status" color={statusToTagName[status] || "grey"}>
+      <Tag type={statusToTagName[status] || "grey"}>
         {status.replace("-", " ")}
       </Tag>
 
