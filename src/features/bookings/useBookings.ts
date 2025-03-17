@@ -9,10 +9,20 @@ export function useBookings() {
   const filterValue = searchParams.get("status");
   const filter =
     !filterValue || filterValue === "all"
-      ? null
+      ? undefined
       : { field: "status", value: filterValue };
-  const { data, isLoading } = useQuery<Booking[]>(["bookings", filter], () =>
-    getBookings({ filter, SortBy: null })
+
+  const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
+  const [field, directionRaw] = sortByRaw.split("-");
+  const direction = directionRaw === "asc" ? "asc" : "desc";
+
+  const sortBy = { field, direction } as const;
+
+  const { data, isLoading } = useQuery<Booking[]>(
+    ["bookings", filter ?? "no-filter", sortBy],
+    () => getBookings({ filter, sortBy }),
+    { keepPreviousData: true }
   );
-  return { bookings: data, isLoading };
+
+  return { bookings: data ?? [], isLoading };
 }
