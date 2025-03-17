@@ -4,10 +4,10 @@ import { Booking, UpdateBookingData } from "../features/bookings/types";
 
 export async function getBookings({
   filter,
-  SortBy,
+  sortBy,
 }: {
-  filter: any;
-  SortBy: any;
+  filter?: { field: string; value: any };
+  sortBy?: { field: string; direction: "asc" | "desc" };
 }): Promise<Booking[]> {
   let query = supabase
     .from("bookings")
@@ -15,9 +15,12 @@ export async function getBookings({
       "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)"
     );
 
-  if (filter !== null)
-    query = query.eq(filter.field as string, filter.value as string);
+  if (filter) query = query.eq(filter.field, filter.value);
 
+  if (sortBy)
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
   const { data, error } = await query;
   if (error || !data) {
     console.error(error);
