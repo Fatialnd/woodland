@@ -6,6 +6,7 @@ import Empty from "../../ui/Empty";
 import Spinner from "../../ui/Spinner";
 import { useBookings } from "./useBookings";
 import type { Booking } from "./types";
+import Pagination from "../../ui/Pagination";
 
 const BookingTable: React.FC = () => {
   const { bookings, isLoading } = useBookings();
@@ -32,6 +33,9 @@ const BookingTable: React.FC = () => {
             <BookingRow key={booking.id} booking={booking} />
           )}
         />
+        <Table.Footer>
+          <Pagination count={45} />
+        </Table.Footer>
       </Table>
     </Menus>
   );
