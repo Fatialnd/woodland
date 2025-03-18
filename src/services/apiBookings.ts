@@ -1,18 +1,22 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { Booking, UpdateBookingData } from "../features/bookings/types";
+import { PAGE_SIZE } from "../utils/constants";
 
 export async function getBookings({
   filter,
   sortBy,
+  page,
 }: {
   filter?: { field: string; value: any };
   sortBy?: { field: string; direction: "asc" | "desc" };
-}): Promise<Booking[]> {
+  page?: number;
+}): Promise<{ bookings: Booking[]; count: number }> {
   let query = supabase
     .from("bookings")
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)"
+      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)",
+      { count: "exact" }
     );
 
   if (filter) query = query.eq(filter.field, filter.value);
@@ -21,26 +25,33 @@ export async function getBookings({
     query = query.order(sortBy.field, {
       ascending: sortBy.direction === "asc",
     });
-  const { data, error } = await query;
+
+  if (page) {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, error, count } = await query;
+
   if (error || !data) {
     console.error(error);
     throw new Error("Bookings could not be loaded");
   }
 
-  return data.map((booking) => ({
-    ...booking,
-    extrasPrice: booking.extrasPrice ?? 0,
-    cabins: booking.cabins
-      ? Array.isArray(booking.cabins)
+  return {
+    bookings: data.map((booking) => ({
+      ...booking,
+      extrasPrice: booking.extrasPrice ?? 0,
+      cabins: Array.isArray(booking.cabins)
         ? booking.cabins[0]
-        : booking.cabins
-      : null,
-    guests: booking.guests
-      ? Array.isArray(booking.guests)
+        : booking.cabins,
+      guests: Array.isArray(booking.guests)
         ? booking.guests[0]
-        : booking.guests
-      : null,
-  }));
+        : booking.guests,
+    })),
+    count: count ?? 0,
+  };
 }
 
 export async function getBooking(id: number): Promise<Booking> {
@@ -91,11 +102,12 @@ export async function getStaysAfterDate(date: string): Promise<Booking[]> {
 }
 
 export async function getStaysTodayActivity(): Promise<Booking[]> {
+  const today = getToday();
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
     .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+      `(status.eq.unconfirmed,startDate.eq.${today}),(status.eq.checked-in,endDate.eq.${today})`
     )
     .order("created_at");
 
