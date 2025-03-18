@@ -9,7 +9,7 @@ import type { Booking } from "./types";
 import Pagination from "../../ui/Pagination";
 
 const BookingTable: React.FC = () => {
-  const { bookings, isLoading } = useBookings();
+  const { bookings, isLoading, count } = useBookings();
 
   if (isLoading) return <Spinner />;
   if (!bookings || bookings.length === 0)
@@ -34,7 +34,7 @@ const BookingTable: React.FC = () => {
           )}
         />
         <Table.Footer>
-          <Pagination count={45} />
+          <Pagination count={count} />
         </Table.Footer>
       </Table>
     </Menus>
