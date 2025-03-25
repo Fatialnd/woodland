@@ -31,6 +31,7 @@ export interface Booking {
 }
 
 export interface PerBooking {
+  id?: string;
   created_at: string;
   startDate: string;
   endDate: string;
