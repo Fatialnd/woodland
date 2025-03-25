@@ -9,14 +9,15 @@ import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
+import { useBooking } from "./useBooking";
+import Spinner from "../../ui/Spinner";
+import { PerBooking } from "./types";
 
 const HeadingGroup = styled.div`
   display: flex;
   gap: 2.4rem;
   align-items: center;
 `;
-
-type Booking = Record<string, unknown>;
 
 type Status = "unconfirmed" | "checked-in" | "checked-out";
 
@@ -31,22 +32,24 @@ const statusToTagName: StatusToTagName = {
 };
 
 function BookingDetail() {
-  const booking: Booking = {};
-  const status: Status = "checked-in";
+  const { booking, isLoading } = useBooking();
+  const { status, id: bookingId } = (booking ?? {}) as {
+    status: Status;
+    id: string | number;
+  };
 
   const moveBack = useMoveBack();
-
+  if (isLoading) return <Spinner />;
   return (
     <>
       <Row type="horizontal">
         <HeadingGroup>
-          <Heading as="h1">Booking #X</Heading>
+          <Heading as="h1">Booking #{bookingId}</Heading>
           <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
-
-      <BookingDataBox booking={booking} />
+      {booking && <BookingDataBox booking={booking as PerBooking} />}
 
       <ButtonGroup>
         <Button variation="secondary" onClick={moveBack}>

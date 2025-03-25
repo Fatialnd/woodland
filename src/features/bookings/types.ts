@@ -8,7 +8,9 @@ export interface Guest {
   fullName: string;
   email: string;
   nationality?: string;
+  country?: string;
   countryFlag?: string;
+  nationalID?: string;
 }
 
 export interface Booking {
@@ -23,6 +25,33 @@ export interface Booking {
   guests?: Guest | null;
   numNights: number;
   numGuests: number;
+  cabinPrice?: number;
+  hasBreakfast?: boolean;
+  isPaid?: boolean;
+}
+
+export interface PerBooking {
+  created_at: string;
+  startDate: string;
+  endDate: string;
+  numNights: number;
+  numGuests: number;
+  cabinPrice?: number;
+  extrasPrice: number;
+  totalPrice: number;
+  hasBreakfast: boolean;
+  observations?: string;
+  isPaid: boolean;
+  guests: {
+    fullName: string;
+    email: string;
+    country: string;
+    countryFlag?: string;
+    nationalID: string;
+  };
+  cabins: {
+    name: string;
+  };
 }
 
 export type UpdateBookingData = Partial<Omit<Booking, "id">>;
