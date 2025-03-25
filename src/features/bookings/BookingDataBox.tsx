@@ -9,7 +9,7 @@ import {
 
 import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
-
+import type { PerBooking } from "./types";
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
 
 const StyledBookingDataBox = styled.section`
@@ -101,35 +101,10 @@ const Footer = styled.footer`
   text-align: right;
 `;
 
-interface Booking {
-  created_at: string;
-  startDate: string;
-  endDate: string;
-  numNights: number;
-  numGuests: number;
-  cabinPrice: number;
-  extrasPrice: number;
-  totalPrice: number;
-  hasBreakfast: boolean;
-  observations?: string;
-  isPaid: boolean;
-  guests: {
-    fullName: string;
-    email: string;
-    country: string;
-    countryFlag?: string;
-    nationalID: string;
-  };
-  cabins: {
-    name: string;
-  };
-}
-
 interface BookingDataBoxProps {
-  booking: Booking;
+  booking: PerBooking;
 }
 
-// A purely presentational component
 function BookingDataBox({ booking }: BookingDataBoxProps) {
   const {
     created_at,
@@ -140,7 +115,7 @@ function BookingDataBox({ booking }: BookingDataBoxProps) {
     cabinPrice,
     extrasPrice,
     totalPrice,
-    hasBreakfast,
+    hasBreakfast = false,
     observations,
     isPaid,
     guests: { fullName: guestName, email, country, countryFlag, nationalID },
