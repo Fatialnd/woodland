@@ -157,6 +157,7 @@ interface ButtonProps {
   children: ReactNode;
   onClick?: () => void;
   icon: IconType;
+  disabled?: boolean;
 }
 
 function Button({ children, onClick, icon }: ButtonProps) {

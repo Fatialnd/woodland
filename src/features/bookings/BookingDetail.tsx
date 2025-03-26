@@ -13,6 +13,8 @@ import { useBooking } from "./useBooking";
 import Spinner from "../../ui/Spinner";
 import { PerBooking } from "./types";
 import { useNavigate } from "react-router-dom";
+import { HiArrowUpOnSquare } from "react-icons/hi2";
+import { useCheckout } from "../check-in-out/useCheckout";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -34,6 +36,7 @@ const statusToTagName: StatusToTagName = {
 
 function BookingDetail() {
   const { booking, isLoading } = useBooking();
+  const { checkout, isCheckingOut } = useCheckout();
   const { status, id: bookingId } = (booking ?? {}) as {
     status: Status;
     id: string | number;
@@ -57,6 +60,14 @@ function BookingDetail() {
         {status === "unconfirmed" && (
           <Button onClick={() => navigate(`/checkin/${bookingId}`)}>
             Check in
+          </Button>
+        )}
+        {status === "checked-in" && (
+          <Button
+            onClick={() => checkout({ bookingId: Number(bookingId) })}
+            disabled={isCheckingOut}
+          >
+            <HiArrowUpOnSquare style={{ marginRight: "0.5rem" }} /> Check out
           </Button>
         )}
         <Button variation="secondary" onClick={moveBack}>
