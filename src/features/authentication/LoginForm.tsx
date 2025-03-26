@@ -14,7 +14,15 @@ function LoginForm() {
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (!email || !password) return;
-    login({ email, password });
+    login(
+      { email, password },
+      {
+        onSettled: () => {
+          setEmail("");
+          setPassword("");
+        },
+      }
+    );
   }
 
   function handleEmailChange(event: ChangeEvent<HTMLInputElement>): void {
