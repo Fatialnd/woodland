@@ -38,7 +38,6 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-// Define types for FormRow props
 interface FormRowProps {
   label: string;
   error?: string;
