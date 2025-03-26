@@ -138,13 +138,12 @@ export async function updateBooking(
   return data;
 }
 
-export async function deleteBooking(id: number): Promise<null> {
+export async function deleteBooking(id: number): Promise<void> {
   const { error } = await supabase.from("bookings").delete().eq("id", id);
 
   if (error) {
     console.error(error);
     throw new Error("Booking could not be deleted");
   }
-
-  return null;
+  return;
 }
