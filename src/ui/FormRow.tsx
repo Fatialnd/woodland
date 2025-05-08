@@ -45,17 +45,17 @@ interface FormRowProps {
 }
 
 function FormRow({ label, error, children }: FormRowProps) {
+  const child = React.isValidElement(children) ? children : null;
+  const id = child?.props?.id;
+
   return (
     <StyledFormRow>
-      {label && (
-        <Label htmlFor={(children as React.ReactElement).props.id}>
-          {label}
-        </Label>
-      )}
+      {label && <Label htmlFor={id}>{label}</Label>}
       {children}
       {error && <Error>{error}</Error>}
     </StyledFormRow>
   );
 }
+
 
 export default FormRow;
