@@ -4,6 +4,7 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import { useForm } from "react-hook-form";
+import  { useSignup }  from "./useSignup";
 
 interface FormValues {
   fullName: string;
@@ -13,11 +14,15 @@ interface FormValues {
 }
 
 const SignupForm: React.FC = () => {
-  const { register, formState, getValues, handleSubmit } = useForm<FormValues>();
+  const {signup, isLoading } = useSignup();
+  const { register, formState, getValues, handleSubmit, reset } = useForm<FormValues>();
   const { errors } = formState;
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form submitted with data:", data);
+  const onSubmit = ({fullName, email, password}: FormValues) => {
+    signup({fullName, email, password}, 
+      {
+      onSettled: () => reset()
+    })
   };
 
   return (
@@ -26,6 +31,7 @@ const SignupForm: React.FC = () => {
         <Input
           type="text"
           id="fullName"
+          disabled={isLoading}
           {...register("fullName", { required: "This field is required" })}
         />
       </FormRow>
@@ -34,6 +40,7 @@ const SignupForm: React.FC = () => {
         <Input
           type="email"
           id="email"
+          disabled={isLoading}
           {...register("email", {
             required: "This field is required",
             pattern: {
@@ -48,6 +55,7 @@ const SignupForm: React.FC = () => {
         <Input
           type="password"
           id="password"
+          disabled={isLoading}
           {...register("password", {
             required: "This field is required",
             minLength: {
@@ -62,6 +70,7 @@ const SignupForm: React.FC = () => {
         <Input
           type="password"
           id="passwordConfirm"
+          disabled={isLoading}
           {...register("passwordConfirm", {
             required: "This field is required",
             validate: (value) =>
@@ -71,10 +80,10 @@ const SignupForm: React.FC = () => {
       </FormRow>
 
       <FormRow label="Actions">
-        <Button variation="secondary" type="reset">
+        <Button disabled={isLoading} variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button type="submit">Create new user</Button>
+        <Button disabled={isLoading} type="submit">Create new user</Button>
       </FormRow>
     </Form>
   );
