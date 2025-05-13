@@ -13,17 +13,17 @@ export function useLogin() {
   const navigate = useNavigate();
 
   const { mutate: login, isLoading } = useMutation<
-    void,
+    { user: any },
     Error,
     LoginCredentials
   >(
     async (credentials: LoginCredentials) => {
-      await loginApi(credentials);
+      return await loginApi(credentials);
     },
     {
       onSuccess: (user) => {
-        queryClient.setQueriesData(["user"], user);
-        navigate("/dashboard");
+        queryClient.setQueryData(["user"], user.user);
+        navigate("/dashboard", { replace: true });
       },
       onError: (error: Error) => {
         console.error(error.message);
