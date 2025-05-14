@@ -1,80 +1,80 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import GlobalStyles from "./styles/GlobalStyles";
-import Dashboard from "./pages/Dashboard";
-import Bookings from "./pages/Bookings";
-import Cabins from "./pages/Cabins";
-import Users from "./pages/Users";
-import Settings from "./pages/Settings";
-import Account from "./pages/Account";
-import Login from "./pages/Login";
-import PageNotFound from "./pages/PageNotFound";
-import AppLayout from "./ui/AppLayout";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Toaster, ToastOptions, ToastType } from "react-hot-toast";
-import Booking from "./pages/Booking";
-import Checkin from "./pages/Checkin";
-import ProtectedRoute from "./ui/ProtectedRoute";
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import GlobalStyles from './styles/GlobalStyles';
+import Dashboard from './pages/Dashboard';
+import Bookings from './pages/Bookings';
+import Cabins from './pages/Cabins';
+import Users from './pages/Users';
+import Settings from './pages/Settings';
+import Account from './pages/Account';
+import Login from './pages/Login';
+import PageNotFound from './pages/PageNotFound';
+import AppLayout from './ui/AppLayout';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Toaster, ToastOptions, ToastType } from 'react-hot-toast';
+import Booking from './pages/Booking';
+import Checkin from './pages/Checkin';
+import ProtectedRoute from './ui/ProtectedRoute';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,
-    },
-  },
+      staleTime: 0
+    }
+  }
 });
 
 const toastOptions: Record<ToastType, ToastOptions> = {
   success: {
     duration: 3000,
     style: {
-      fontSize: "16px",
-      maxWidth: "500px",
-      padding: "16px 24px",
-      backgroundColor: "var(--color-grey-0)",
-      color: "var(--color-grey-700)",
-    },
+      fontSize: '16px',
+      maxWidth: '500px',
+      padding: '16px 24px',
+      backgroundColor: 'var(--color-grey-0)',
+      color: 'var(--color-grey-700)'
+    }
   },
   error: {
     duration: 5000,
     style: {
-      fontSize: "16px",
-      maxWidth: "500px",
-      padding: "16px 24px",
-      backgroundColor: "var(--color-grey-0)",
-      color: "var(--color-grey-700)",
-    },
+      fontSize: '16px',
+      maxWidth: '500px',
+      padding: '16px 24px',
+      backgroundColor: 'var(--color-grey-0)',
+      color: 'var(--color-grey-700)'
+    }
   },
   loading: {
     duration: 4000,
     style: {
-      fontSize: "16px",
-      maxWidth: "500px",
-      padding: "16px 24px",
-      backgroundColor: "var(--color-grey-0)",
-      color: "var(--color-grey-700)",
-    },
+      fontSize: '16px',
+      maxWidth: '500px',
+      padding: '16px 24px',
+      backgroundColor: 'var(--color-grey-0)',
+      color: 'var(--color-grey-700)'
+    }
   },
   blank: {
     duration: 4000,
     style: {
-      fontSize: "16px",
-      maxWidth: "500px",
-      padding: "16px 24px",
-      backgroundColor: "var(--color-grey-0)",
-      color: "var(--color-grey-700)",
-    },
+      fontSize: '16px',
+      maxWidth: '500px',
+      padding: '16px 24px',
+      backgroundColor: 'var(--color-grey-0)',
+      color: 'var(--color-grey-700)'
+    }
   },
   custom: {
     duration: 4000,
     style: {
-      fontSize: "16px",
-      maxWidth: "500px",
-      padding: "16px 24px",
-      backgroundColor: "var(--color-grey-0)",
-      color: "var(--color-grey-700)",
-    },
-  },
+      fontSize: '16px',
+      maxWidth: '500px',
+      padding: '16px 24px',
+      backgroundColor: 'var(--color-grey-0)',
+      color: 'var(--color-grey-700)'
+    }
+  }
 };
 
 const App: React.FC = () => {
@@ -111,7 +111,7 @@ const App: React.FC = () => {
 
       <Toaster
         position="top-center"
-        containerStyle={{ margin: "8px" }}
+        containerStyle={{ margin: '8px' }}
         gutter={12}
         toastOptions={toastOptions}
       />

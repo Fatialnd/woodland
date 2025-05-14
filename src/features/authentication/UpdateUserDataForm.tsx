@@ -1,13 +1,13 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, FormEvent, ChangeEvent } from 'react';
 
-import Button from "../../ui/Button";
-import FileInput from "../../ui/FileInput";
-import Form from "../../ui/Form";
-import FormRow from "../../ui/FormRow";
-import Input from "../../ui/Input";
+import Button from '../../ui/Button';
+import FileInput from '../../ui/FileInput';
+import Form from '../../ui/Form';
+import FormRow from '../../ui/FormRow';
+import Input from '../../ui/Input';
 
-import { useUser } from "./useUser";
-import { useUpdateUser } from "./useUpdateUser";
+import { useUser } from './useUser';
+import { useUpdateUser } from './useUpdateUser';
 
 interface UserMetadata {
   fullName: string;
@@ -19,34 +19,34 @@ interface User {
 }
 
 function UpdateUserDataForm() {
-
   const { user } = useUser();
 
   if (!user) {
-    throw new Error("User data is not available");
+    throw new Error('User data is not available');
   }
 
   const {
     email,
-    user_metadata: { fullName: currentFullName },
+    user_metadata: { fullName: currentFullName }
   } = user;
 
-  const {updateUser, isUpdating} = useUpdateUser();
+  const { updateUser, isUpdating } = useUpdateUser();
 
   const [fullName, setFullName] = useState<string>(currentFullName);
   const [avatar, setAvatar] = useState<File | null>(null);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if(!fullName) return;
+    if (!fullName) return;
     updateUser(
-      {fullName, avatar},
+      { fullName, avatar },
       {
         onSuccess: () => {
-          setAvatar(null); 
+          setAvatar(null);
           (e.target as HTMLFormElement).reset();
+        }
       }
-    });
+    );
   }
 
   function handleCancel() {
@@ -75,10 +75,17 @@ function UpdateUserDataForm() {
         />
       </FormRow>
       <FormRow label="Avatar image" error="">
-        <FileInput id="avatar" accept="image/*" onChange={handleFileChange} disabled={isUpdating} />
+        <FileInput
+          id="avatar"
+          accept="image/*"
+          onChange={handleFileChange}
+          disabled={isUpdating}
+        />
       </FormRow>
       <FormRow label="" error="">
-        <Button type="reset" onClick={handleCancel} disabled={isUpdating}>Cancel</Button>
+        <Button type="reset" onClick={handleCancel} disabled={isUpdating}>
+          Cancel
+        </Button>
         <Button disabled={isUpdating}>Update account</Button>
       </FormRow>
     </Form>

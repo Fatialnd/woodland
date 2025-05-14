@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { useUser } from "./useUser";
+import styled from 'styled-components';
+import { useUser } from './useUser';
 
 const StyledUserAvatar = styled.div`
   display: flex;
@@ -22,8 +22,8 @@ const Avatar = styled.img`
 
 function UserAvatar(): JSX.Element {
   const { user } = useUser();
-  const fullName = user?.user_metadata?.fullName ?? "test user";
-  const avatar = user?.user_metadata?.avatar ?? "default-user.jpg";
+  const fullName = user?.user_metadata?.fullName ?? 'test user';
+  const avatar = user?.user_metadata?.avatar ?? 'default-user.jpg';
 
   return (
     <StyledUserAvatar>
