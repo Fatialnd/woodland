@@ -7,6 +7,7 @@ import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 
 import { useUser } from "./useUser";
+import { useUpdateUser } from "./useUpdateUser";
 
 interface UserMetadata {
   fullName: string;
@@ -18,19 +19,39 @@ interface User {
 }
 
 function UpdateUserDataForm() {
-  // We don't need the loading state, and can immediately use the user data, because we know that it has already been loaded at this point
+
+  const { user } = useUser();
+
+  if (!user) {
+    throw new Error("User data is not available");
+  }
+
   const {
-    user: {
-      email,
-      user_metadata: { fullName: currentFullName },
-    },
-  }: { user: User } = useUser();
+    email,
+    user_metadata: { fullName: currentFullName },
+  } = user;
+
+  const {updateUser, isUpdating} = useUpdateUser();
 
   const [fullName, setFullName] = useState<string>(currentFullName);
   const [avatar, setAvatar] = useState<File | null>(null);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if(!fullName) return;
+    updateUser(
+      {fullName, avatar},
+      {
+        onSuccess: () => {
+          setAvatar(null); 
+          (e.target as HTMLFormElement).reset();
+      }
+    });
+  }
+
+  function handleCancel() {
+    setFullName(currentFullName);
+    setAvatar(null);
   }
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -50,14 +71,15 @@ function UpdateUserDataForm() {
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           id="fullName"
+          disabled={isUpdating}
         />
       </FormRow>
       <FormRow label="Avatar image" error="">
-        <FileInput id="avatar" accept="image/*" onChange={handleFileChange} />
+        <FileInput id="avatar" accept="image/*" onChange={handleFileChange} disabled={isUpdating} />
       </FormRow>
       <FormRow label="" error="">
-        <Button type="reset">Cancel</Button>
-        <Button>Update account</Button>
+        <Button type="reset" onClick={handleCancel} disabled={isUpdating}>Cancel</Button>
+        <Button disabled={isUpdating}>Update account</Button>
       </FormRow>
     </Form>
   );

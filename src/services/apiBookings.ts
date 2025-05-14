@@ -1,29 +1,29 @@
-import { getToday } from "../utils/helpers";
-import supabase from "./supabase";
-import { Booking, UpdateBookingData } from "../features/bookings/types";
-import { PAGE_SIZE } from "../utils/constants";
+import { getToday } from '../utils/helpers';
+import supabase from './supabase';
+import { Booking, UpdateBookingData } from '../features/bookings/types';
+import { PAGE_SIZE } from '../utils/constants';
 
 export async function getBookings({
   filter,
   sortBy,
-  page,
+  page
 }: {
   filter?: { field: string; value: any };
-  sortBy?: { field: string; direction: "asc" | "desc" };
+  sortBy?: { field: string; direction: 'asc' | 'desc' };
   page?: number;
 }): Promise<{ bookings: Booking[]; count: number }> {
   let query = supabase
-    .from("bookings")
+    .from('bookings')
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)",
-      { count: "exact" }
+      'id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, extrasPrice, cabins(id, name), guests(id, fullName, email)',
+      { count: 'exact' }
     );
 
   if (filter) query = query.eq(filter.field, filter.value);
 
   if (sortBy)
     query = query.order(sortBy.field, {
-      ascending: sortBy.direction === "asc",
+      ascending: sortBy.direction === 'asc'
     });
 
   if (page) {
@@ -36,7 +36,7 @@ export async function getBookings({
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not be loaded");
+    throw new Error('Bookings could not be loaded');
   }
 
   return {
@@ -46,24 +46,22 @@ export async function getBookings({
       cabins: Array.isArray(booking.cabins)
         ? booking.cabins[0]
         : booking.cabins,
-      guests: Array.isArray(booking.guests)
-        ? booking.guests[0]
-        : booking.guests,
+      guests: Array.isArray(booking.guests) ? booking.guests[0] : booking.guests
     })),
-    count: count ?? 0,
+    count: count ?? 0
   };
 }
 
 export async function getBooking(id: number): Promise<Booking> {
   const { data, error } = await supabase
-    .from("bookings")
-    .select("*, cabins(*), guests(*)")
-    .eq("id", id)
+    .from('bookings')
+    .select('*, cabins(*), guests(*)')
+    .eq('id', id)
     .single();
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Booking not found");
+    throw new Error('Booking not found');
   }
 
   return data;
@@ -73,14 +71,14 @@ export async function getBookingsAfterDate(
   date: string
 ): Promise<{ created_at: string; totalPrice: number; extrasPrice: number }[]> {
   const { data, error } = await supabase
-    .from("bookings")
-    .select("created_at, totalPrice, extrasPrice")
-    .gte("created_at", date)
-    .lte("created_at", getToday({ end: true }));
+    .from('bookings')
+    .select('created_at, totalPrice, extrasPrice')
+    .gte('created_at', date)
+    .lte('created_at', getToday({ end: true }));
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not be loaded");
+    throw new Error('Bookings could not be loaded');
   }
 
   return data;
@@ -88,14 +86,14 @@ export async function getBookingsAfterDate(
 
 export async function getStaysAfterDate(date: string): Promise<Booking[]> {
   const { data, error } = await supabase
-    .from("bookings")
-    .select("*, guests(fullName)")
-    .gte("startDate", date)
-    .lte("startDate", getToday());
+    .from('bookings')
+    .select('*, guests(fullName)')
+    .gte('startDate', date)
+    .lte('startDate', getToday());
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not be loaded");
+    throw new Error('Bookings could not be loaded');
   }
 
   return data;
@@ -104,16 +102,16 @@ export async function getStaysAfterDate(date: string): Promise<Booking[]> {
 export async function getStaysTodayActivity(): Promise<Booking[]> {
   const today = getToday();
   const { data, error } = await supabase
-    .from("bookings")
-    .select("*, guests(fullName, nationality, countryFlag)")
+    .from('bookings')
+    .select('*, guests(fullName, nationality, countryFlag)')
     .or(
       `(status.eq.unconfirmed,startDate.eq.${today}),(status.eq.checked-in,endDate.eq.${today})`
     )
-    .order("created_at");
+    .order('created_at');
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Bookings could not be loaded");
+    throw new Error('Bookings could not be loaded');
   }
 
   return data;
@@ -124,26 +122,26 @@ export async function updateBooking(
   obj: UpdateBookingData
 ): Promise<Booking> {
   const { data, error } = await supabase
-    .from("bookings")
+    .from('bookings')
     .update(obj)
-    .eq("id", id)
+    .eq('id', id)
     .select()
     .single();
 
   if (error || !data) {
     console.error(error);
-    throw new Error("Booking could not be updated");
+    throw new Error('Booking could not be updated');
   }
 
   return data;
 }
 
 export async function deleteBooking(id: number): Promise<void> {
-  const { error } = await supabase.from("bookings").delete().eq("id", id);
+  const { error } = await supabase.from('bookings').delete().eq('id', id);
 
   if (error) {
     console.error(error);
-    throw new Error("Booking could not be deleted");
+    throw new Error('Booking could not be deleted');
   }
   return;
 }

@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { updateBooking } from "../../services/apiBookings";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { updateBooking } from '../../services/apiBookings';
 
 export function useCheckin() {
   const queryClient = useQueryClient();
@@ -10,23 +10,23 @@ export function useCheckin() {
   const { mutate: checkin, isLoading: isCheckingIn } = useMutation({
     mutationFn: ({
       bookingId,
-      breakfast,
+      breakfast
     }: {
       bookingId: number;
       breakfast?: object;
     }) =>
       updateBooking(bookingId, {
-        status: "checked-in",
+        status: 'checked-in',
         isPaid: true,
-        ...breakfast,
+        ...breakfast
       }),
 
     onSuccess: (data) => {
       toast.success(`Booking #${data.id} successfully checked in`);
       queryClient.invalidateQueries();
-      navigate("/");
+      navigate('/');
     },
-    onError: () => toast.error("There was an error while checking in"),
+    onError: () => toast.error('There was an error while checking in')
   });
 
   return { checkin, isCheckingIn };
