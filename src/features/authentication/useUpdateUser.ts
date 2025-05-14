@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
-import { updateCurrentUser } from "../../services/apiAuth"; 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
+import { updateCurrentUser } from '../../services/apiAuth';
 
 interface UpdateUserParams {
   fullName?: string;
@@ -17,19 +17,19 @@ export function useUpdateUser() {
     UpdateUserParams
   >(
     async ({ fullName, avatar, password }) => {
-        return await updateCurrentUser({
-          fullName,
-          avatar: avatar ?? undefined,
-          password,
-        });      
+      return await updateCurrentUser({
+        fullName,
+        avatar: avatar ?? undefined,
+        password
+      });
     },
     {
-      onSuccess: ({user}) => {
-        toast.success("User successfully updated");
+      onSuccess: ({ user }) => {
+        toast.success('User successfully updated');
         // queryClient.setQueryData(["user"], user);
-        queryClient.invalidateQueries({ queryKey: ["user"] });
+        queryClient.invalidateQueries({ queryKey: ['user'] });
       },
-      onError: (err: Error) => toast.error(err.message),
+      onError: (err: Error) => toast.error(err.message)
     }
   );
 
