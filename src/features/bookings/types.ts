@@ -20,7 +20,7 @@ export interface Booking {
   created_at: string;
   totalPrice: number;
   extrasPrice: number;
-  status: "unconfirmed" | "checked-in" | "checked-out" | "cancelled";
+  status: 'unconfirmed' | 'checked-in' | 'checked-out' | 'cancelled';
   cabins?: Cabin | null;
   guests?: Guest | null;
   numNights: number;
@@ -55,4 +55,4 @@ export interface PerBooking {
   };
 }
 
-export type UpdateBookingData = Partial<Omit<Booking, "id">>;
+export type UpdateBookingData = Partial<Omit<Booking, 'id'>>;

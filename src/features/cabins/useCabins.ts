@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getCabins } from "../../services/apiCabins";
+import { useQuery } from '@tanstack/react-query';
+import { getCabins } from '../../services/apiCabins';
 
 interface Cabin {
   id: number;
@@ -15,10 +15,10 @@ export function useCabins() {
   const {
     isLoading,
     data: cabins,
-    error,
+    error
   } = useQuery<Cabin[]>({
-    queryKey: ["cabins"],
-    queryFn: getCabins,
+    queryKey: ['cabins'],
+    queryFn: getCabins
   });
 
   return { isLoading, error, cabins };

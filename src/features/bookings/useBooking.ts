@@ -1,19 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { getBooking } from "../../services/apiBookings";
-import { useParams } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
+import { getBooking } from '../../services/apiBookings';
+import { useParams } from 'react-router-dom';
 
 export function useBooking() {
   const { bookingId } = useParams();
   const {
     isLoading,
     data: booking,
-    error,
+    error
   } = useQuery({
-    queryKey: ["booking", bookingId],
+    queryKey: ['booking', bookingId],
     queryFn: () =>
       bookingId
         ? getBooking(Number(bookingId))
-        : Promise.reject(new Error("Invalid booking ID")),
+        : Promise.reject(new Error('Invalid booking ID'))
   });
 
   return { isLoading, error, booking };
