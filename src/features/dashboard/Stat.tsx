@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyledStat = styled.div`
   /* Box */
@@ -50,7 +50,7 @@ const Value = styled.p`
 interface StatProps {
   icon: React.ReactNode;
   title: string;
-  value: string | number;
+  value: string;
   color: string;
 }
 
