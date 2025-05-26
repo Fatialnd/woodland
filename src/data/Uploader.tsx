@@ -1,149 +1,185 @@
-import { useState } from "react";
-import { isFuture, isPast, isToday } from "date-fns";
-import supabase from "../services/supabase";
-import Button from "../ui/Button";
-import { subtractDates } from "../utils/helpers";
+import { useState } from 'react';
+import { isFuture, isPast, isToday } from 'date-fns';
+import supabase from '../services/supabase';
+import Button from '../ui/Button';
+import { subtractDates } from '../utils/helpers';
 
-import { bookings } from "./data-bookings";
-import { cabins } from "./data-cabins";
-import { guests } from "./data-guests";
+import { bookings } from './data-bookings';
+import { cabins } from './data-cabins';
+import { guests } from './data-guests';
 
-type Booking = {
-  cabinId: number;
-  guestId: number;
-  startDate: string;
-  endDate: string;
-  hasBreakfast: boolean;
-  numGuests: number;
-};
+const BREAKFAST_PRICE = 15;
 
-type Cabin = {
-  id: number;
-  regularPrice: number;
-  discount: number;
-};
-
-type GuestId = { id: number };
-type CabinId = { id: number };
-
-async function deleteGuests(): Promise<void> {
-  const { error } = await supabase.from("guests").delete().gt("id", 0);
-  if (error) console.log(error.message);
+async function deleteGuests() {
+  try {
+    const { error } = await supabase.from('guests').delete().gt('id', 0);
+    if (error) throw error;
+  } catch (error: any) {
+    console.error('Error deleting guests:', error.message);
+  }
 }
 
-async function deleteCabins(): Promise<void> {
-  const { error } = await supabase.from("cabins").delete().gt("id", 0);
-  if (error) console.log(error.message);
+async function deleteCabins() {
+  try {
+    const { error } = await supabase.from('cabins').delete().gt('id', 0);
+    if (error) throw error;
+  } catch (error: any) {
+    console.error('Error deleting cabins:', error.message);
+  }
 }
 
-async function deleteBookings(): Promise<void> {
-  const { error } = await supabase.from("bookings").delete().gt("id", 0);
-  if (error) console.log(error.message);
+async function deleteBookings() {
+  try {
+    const { error } = await supabase.from('bookings').delete().gt('id', 0);
+    if (error) throw error;
+  } catch (error: any) {
+    console.error('Error deleting bookings:', error.message);
+  }
 }
 
-async function createGuests(): Promise<void> {
-  const { error } = await supabase.from("guests").insert(guests);
-  if (error) console.log(error.message);
+async function createGuests() {
+  try {
+    const { error } = await supabase.from('guests').insert(guests);
+    if (error) throw error;
+  } catch (error: any) {
+    console.error('Error creating guests:', error.message);
+  }
 }
 
-async function createCabins(): Promise<void> {
-  const { error } = await supabase.from("cabins").insert(cabins);
-  if (error) console.log(error.message);
+async function createCabins() {
+  try {
+    const { error } = await supabase.from('cabins').insert(cabins);
+    if (error) throw error;
+  } catch (error: any) {
+    console.error('Error creating cabins:', error.message);
+  }
 }
 
-async function createBookings(): Promise<void> {
-  const { data: guestsIds } = await supabase
-    .from("guests")
-    .select("id")
-    .order("id");
-  const allGuestIds = guestsIds?.map((guest: GuestId) => guest.id) || [];
-  const { data: cabinsIds } = await supabase
-    .from("cabins")
-    .select("id")
-    .order("id");
-  const allCabinIds = cabinsIds?.map((cabin: CabinId) => cabin.id) || [];
+async function createBookings() {
+  try {
+    // Get actual guest and cabin IDs from DB
+    const { data: guestsIds, error: guestError } = await supabase
+      .from('guests')
+      .select('id')
+      .order('id');
 
-  const finalBookings = bookings.map((booking: Booking) => {
-    const cabin = cabins.at(booking.cabinId - 1) as Cabin | undefined;
-    if (!cabin) {
-      throw new Error(`Cabin with id ${booking.cabinId} not found`);
-    }
-    const numNights = subtractDates(booking.endDate, booking.startDate);
-    const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
-    const extrasPrice = booking.hasBreakfast
-      ? numNights * 15 * booking.numGuests
-      : 0;
-    const totalPrice = cabinPrice + extrasPrice;
+    if (guestError || !guestsIds)
+      throw guestError || new Error('No guest IDs found');
+    const allGuestIds = guestsIds.map((g) => g.id);
 
-    let status: "checked-out" | "unconfirmed" | "checked-in" = "unconfirmed";
-    if (
-      isPast(new Date(booking.endDate)) &&
-      !isToday(new Date(booking.endDate))
-    )
-      status = "checked-out";
-    if (
-      isFuture(new Date(booking.startDate)) ||
-      isToday(new Date(booking.startDate))
-    )
-      status = "unconfirmed";
-    if (
-      (isFuture(new Date(booking.endDate)) ||
-        isToday(new Date(booking.endDate))) &&
-      isPast(new Date(booking.startDate)) &&
-      !isToday(new Date(booking.startDate))
-    )
-      status = "checked-in";
+    const { data: cabinsIds, error: cabinError } = await supabase
+      .from('cabins')
+      .select('id')
+      .order('id');
 
-    return {
-      ...booking,
-      numNights,
-      cabinPrice,
-      extrasPrice,
-      totalPrice,
-      guestId: allGuestIds.at(booking.guestId - 1),
-      cabinId: allCabinIds.at(booking.cabinId - 1),
-      status,
-    };
-  });
+    if (cabinError || !cabinsIds)
+      throw cabinError || new Error('No cabin IDs found');
+    const allCabinIds = cabinsIds.map((c) => c.id);
 
-  console.log(finalBookings);
+    const finalBookings = bookings.map((booking) => {
+      const cabin = cabins[booking.cabinId - 1]; // assuming 1-based indexing in original data
+      const numNights = subtractDates(booking.endDate, booking.startDate);
+      const cabinPrice =
+        numNights * ((cabin?.regularPrice ?? 0) - (cabin?.discount ?? 0));
+      const extrasPrice = booking.hasBreakfast
+        ? numNights * BREAKFAST_PRICE * booking.numGuests
+        : 0;
+      const totalPrice = cabinPrice + extrasPrice;
 
-  const { error } = await supabase.from("bookings").insert(finalBookings);
-  if (error) console.log(error.message);
+      // Map guestId and cabinId safely
+      const guestId = allGuestIds[booking.guestId - 1];
+      const cabinId = allCabinIds[booking.cabinId - 1];
+      if (guestId === undefined)
+        console.warn(
+          `Guest ID mapping missing for original guestId ${booking.guestId}`
+        );
+      if (cabinId === undefined)
+        console.warn(
+          `Cabin ID mapping missing for original cabinId ${booking.cabinId}`
+        );
+
+      // Determine status with if-else if chain
+      let status = 'unknown';
+      const startDate = new Date(booking.startDate);
+      const endDate = new Date(booking.endDate);
+      if (isPast(endDate) && !isToday(endDate)) {
+        status = 'checked-out';
+      } else if (isFuture(startDate) || isToday(startDate)) {
+        status = 'unconfirmed';
+      } else if (
+        (isFuture(endDate) || isToday(endDate)) &&
+        isPast(startDate) &&
+        !isToday(startDate)
+      ) {
+        status = 'checked-in';
+      }
+
+      return {
+        ...booking,
+        numNights,
+        cabinPrice,
+        extrasPrice,
+        totalPrice,
+        guestId,
+        cabinId,
+        status
+      };
+    });
+
+    console.log('Final bookings to insert:', finalBookings);
+
+    const { error } = await supabase.from('bookings').insert(finalBookings);
+    if (error) throw error;
+  } catch (error: any) {
+    console.error('Error creating bookings:', error.message);
+  }
 }
 
 function Uploader() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function uploadAll(): Promise<void> {
+  async function uploadAll() {
     setIsLoading(true);
-    await deleteBookings();
-    await deleteGuests();
-    await deleteCabins();
-    await createGuests();
-    await createCabins();
-    await createBookings();
-    setIsLoading(false);
+    try {
+      // Delete in correct order to avoid FK constraint issues
+      await deleteBookings();
+      await deleteGuests();
+      await deleteCabins();
+
+      // Create in correct order
+      await createGuests();
+      await createCabins();
+      await createBookings();
+    } catch (error) {
+      console.error('Upload all error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  async function uploadBookings(): Promise<void> {
+  async function uploadBookings() {
     setIsLoading(true);
-    await deleteBookings();
-    await createBookings();
-    setIsLoading(false);
+    try {
+      await deleteBookings();
+      await createBookings();
+    } catch (error) {
+      console.error('Upload bookings error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <div
       style={{
-        marginTop: "auto",
-        backgroundColor: "#e0e7ff",
-        padding: "8px",
-        borderRadius: "5px",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
+        marginTop: 'auto',
+        backgroundColor: '#e0e7ff',
+        padding: '8px',
+        borderRadius: '5px',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px'
       }}
     >
       <h3>SAMPLE DATA</h3>
