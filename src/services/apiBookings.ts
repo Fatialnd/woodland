@@ -100,14 +100,16 @@ export async function getStaysAfterDate(date: string): Promise<Booking[]> {
 }
 
 export async function getStaysTodayActivity(): Promise<Booking[]> {
-  const today = getToday();
+  const today = new Date().toISOString().split('T')[0];
+
   const { data, error } = await supabase
     .from('bookings')
     .select('*, guests(fullName, nationality, countryFlag)')
     .or(
-      `(status.eq.unconfirmed,startDate.eq.${today}),(status.eq.checked-in,endDate.eq.${today})`
+      `and(status.eq.unconfirmed,startDate.eq.${today}),and(status.eq.checked-in,startDate.lte.${today},endDate.gte.${today})`
     )
-    .order('created_at');
+
+    .order('created_at', { ascending: true });
 
   if (error || !data) {
     console.error(error);
