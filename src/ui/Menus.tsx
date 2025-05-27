@@ -1,11 +1,11 @@
-import React from "react";
-import styled from "styled-components";
-import { ReactNode, useContext, useState, useRef } from "react";
-import { createContext } from "react";
-import { HiEllipsisVertical } from "react-icons/hi2";
-import { createPortal } from "react-dom";
-import { IconType } from "react-icons";
-import { useOutsideClick } from "../hooks/useOutsideClick";
+import React from 'react';
+import styled from 'styled-components';
+import { ReactNode, useContext, useState, useRef } from 'react';
+import { createContext } from 'react';
+import { HiEllipsisVertical } from 'react-icons/hi2';
+import { createPortal } from 'react-dom';
+import { IconType } from 'react-icons';
+import { useOutsideClick } from '../hooks/useOutsideClick';
 
 const Menu = styled.div`
   display: flex;
@@ -89,11 +89,11 @@ interface MenusProps {
 }
 
 function Menus({ children }: MenusProps) {
-  const [openId, setOpenId] = useState<string>("");
+  const [openId, setOpenId] = useState<string>('');
   const [position, setPosition] = useState<{ x: number; y: number } | null>(
     null
   );
-  const close = () => setOpenId("");
+  const close = () => setOpenId('');
   const open = (id: string) => setOpenId(id);
   return (
     <MenusContext.Provider
@@ -110,17 +110,18 @@ interface ToggleProps {
 
 function Toggle({ id }: ToggleProps) {
   const context = useContext(MenusContext);
-  if (!context) throw new Error("Toggle must be used within a Menus component");
+  if (!context) throw new Error('Toggle must be used within a Menus component');
 
   const { openId, close, open, setPosition } = context;
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
     const rect = (e.target as HTMLElement)
-      .closest("button")
+      .closest('button')
       ?.getBoundingClientRect();
     openId !== id.toString() ? open(id.toString()) : close();
     setPosition({
       x: rect ? window.innerWidth - rect.width - rect.x : 0,
-      y: rect ? rect.y + rect.height + 8 : 0,
+      y: rect ? rect.y + rect.height + 8 : 0
     });
   }
   return (
@@ -137,11 +138,11 @@ interface ListProps {
 
 function List({ id, children }: ListProps) {
   const context = useContext(MenusContext);
-  if (!context) throw new Error("List must be used within a Menus component");
+  if (!context) throw new Error('List must be used within a Menus component');
 
   const { openId, position: listPosition, close } = context;
   if (openId !== id.toString()) return null;
-  const ref = useOutsideClick<HTMLUListElement>(close);
+  const ref = useOutsideClick<HTMLUListElement>(close, false);
 
   return listPosition
     ? createPortal(
@@ -162,7 +163,7 @@ interface ButtonProps {
 
 function Button({ children, onClick, icon }: ButtonProps) {
   const context = useContext(MenusContext);
-  if (!context) throw new Error("Button must be used within a Menus component");
+  if (!context) throw new Error('Button must be used within a Menus component');
   const { close } = context;
 
   function handleClick() {
