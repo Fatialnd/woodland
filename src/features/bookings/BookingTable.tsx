@@ -1,19 +1,20 @@
-import React from "react";
-import BookingRow from "./BookingRow";
-import Table from "../../ui/Table";
-import Menus from "../../ui/Menus";
-import Empty from "../../ui/Empty";
-import Spinner from "../../ui/Spinner";
-import { useBookings } from "./useBookings";
-import type { Booking } from "./types";
-import Pagination from "../../ui/Pagination";
+import React from 'react';
+import BookingRow from './BookingRow';
+import Table from '../../ui/Table';
+import Menus from '../../ui/Menus';
+import Empty from '../../ui/Empty';
+import Spinner from '../../ui/Spinner';
+import { useBookings } from './useBookings';
+import type { Booking } from './types';
+import Pagination from '../../ui/Pagination';
 
 const BookingTable: React.FC = () => {
   const { bookings, isLoading, count } = useBookings();
 
-  if (isLoading) return <Spinner />;
   if (!bookings || bookings.length === 0)
     return <Empty resourceName="bookings" />;
+
+  if (isLoading) return <Spinner />;
 
   return (
     <Menus>
