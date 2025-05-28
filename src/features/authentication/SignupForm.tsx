@@ -1,10 +1,10 @@
-import React from "react";
-import Button from "../../ui/Button";
-import Form from "../../ui/Form";
-import FormRow from "../../ui/FormRow";
-import Input from "../../ui/Input";
-import { useForm } from "react-hook-form";
-import  { useSignup }  from "./useSignup";
+import React from 'react';
+import Button from '../../ui/Button';
+import Form from '../../ui/Form';
+import FormRow from '../../ui/FormRow';
+import Input from '../../ui/Input';
+import { useForm } from 'react-hook-form';
+import { useSignup } from './useSignup';
 
 interface FormValues {
   fullName: string;
@@ -14,15 +14,18 @@ interface FormValues {
 }
 
 const SignupForm: React.FC = () => {
-  const {signup, isLoading } = useSignup();
-  const { register, formState, getValues, handleSubmit, reset } = useForm<FormValues>();
+  const { signup, isLoading } = useSignup();
+  const { register, formState, getValues, handleSubmit, reset } =
+    useForm<FormValues>();
   const { errors } = formState;
 
-  const onSubmit = ({fullName, email, password}: FormValues) => {
-    signup({fullName, email, password}, 
+  const onSubmit = ({ fullName, email, password }: FormValues) => {
+    signup(
+      { fullName, email, password },
       {
-      onSettled: () => reset()
-    })
+        onSettled: () => reset()
+      }
+    );
   };
 
   return (
@@ -32,7 +35,7 @@ const SignupForm: React.FC = () => {
           type="text"
           id="fullName"
           disabled={isLoading}
-          {...register("fullName", { required: "This field is required" })}
+          {...register('fullName', { required: 'This field is required' })}
         />
       </FormRow>
 
@@ -41,27 +44,30 @@ const SignupForm: React.FC = () => {
           type="email"
           id="email"
           disabled={isLoading}
-          {...register("email", {
-            required: "This field is required",
+          {...register('email', {
+            required: 'This field is required',
             pattern: {
               value: /\S+@\S+\.\S+/,
-              message: "Please enter a valid email address",
-            },
+              message: 'Please enter a valid email address'
+            }
           })}
         />
       </FormRow>
 
-      <FormRow label="Password (min 8 characters)" error={errors.password?.message}>
+      <FormRow
+        label="Password (min 8 characters)"
+        error={errors.password?.message}
+      >
         <Input
           type="password"
           id="password"
           disabled={isLoading}
-          {...register("password", {
-            required: "This field is required",
+          {...register('password', {
+            required: 'This field is required',
             minLength: {
               value: 8,
-              message: "Password must be at least 8 characters long",
-            },
+              message: 'Password must be at least 8 characters long'
+            }
           })}
         />
       </FormRow>
@@ -71,10 +77,10 @@ const SignupForm: React.FC = () => {
           type="password"
           id="passwordConfirm"
           disabled={isLoading}
-          {...register("passwordConfirm", {
-            required: "This field is required",
+          {...register('passwordConfirm', {
+            required: 'This field is required',
             validate: (value) =>
-              value === getValues().password || "Passwords need to match",
+              value === getValues().password || 'Passwords need to match'
           })}
         />
       </FormRow>
@@ -83,7 +89,9 @@ const SignupForm: React.FC = () => {
         <Button disabled={isLoading} variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isLoading} type="submit">Create new user</Button>
+        <Button disabled={isLoading} type="submit">
+          Create new user
+        </Button>
       </FormRow>
     </Form>
   );
