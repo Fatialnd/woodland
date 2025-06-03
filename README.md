@@ -35,11 +35,15 @@
 
 ### 🔐 User Authentication & Management
 
+![Login](./public/screenshots/login.png)
+
 - Secure login system via Supabase
 - Employees can upload avatars, and update their name and password
 - Account creation only possible internally
 
 ### 🛏️ Cabins Management
+
+![Cabin](./public/screenshots/cabin.png)
 
 - Table view of all cabins with:
   - Photo, name, capacity, price, discount
@@ -47,18 +51,17 @@
 
 ### 📆 Bookings Management
 
+![Booking](./public/screenshots/booking.png)
+
 - View all bookings: arrival/departure dates, status, paid amount
 - Booking status filters: `unconfirmed`, `checked in`, `checked out`
 - Guests, nights, observations, and breakfast included
 - Check in/out guests & confirm payment
 - Add breakfast during check-in if not previously added
 
-### 👤 Guest Management
-
-- Guest data includes name, email, national ID, nationality, and flag
-- Easy identification of guests
-
 ### 📊 Dashboard
+
+![Dashboard](./public/screenshots/dashboard.png)
 
 - Daily check-in/out actions
 - Key metrics: bookings, check-ins, revenue, occupancy
@@ -67,11 +70,14 @@
 
 ### ⚙️ Settings
 
+![Setting](./public/screenshots/setting.png)
+
 - Define app-wide settings:
   - Breakfast price
   - Min/max nights per booking
   - Max guests per booking
 - Dark mode toggle
+![Dark mode](./public/screenshots/darkmode-dashboard.png)
 
 ---
 
