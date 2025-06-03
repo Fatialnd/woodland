@@ -34,7 +34,8 @@
 ## 📋 Key Features
 
 ### 🔐 User Authentication & Management
-
+![Login page](<img width="811" alt="Screenshot 2025-06-03 at 12 48 28" src="https://github.com/user-attachments/assets/85768331-93ae-4013-bd7a-3ee06697a56f" />
+)
 - Secure login system via Supabase
 - Employees can upload avatars, and update their name and password
 - Account creation only possible internally
