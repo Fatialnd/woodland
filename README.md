@@ -34,7 +34,7 @@
 ## 📋 Key Features
 
 ### 🔐 User Authentication & Management
-![Login page]()
+()
 - Secure login system via Supabase
 - Employees can upload avatars, and update their name and password
 - Account creation only possible internally
