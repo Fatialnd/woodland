@@ -2,7 +2,7 @@
 
 **Woodland** is a custom-built internal management application for a small boutique hotel with 8 luxurious wooden cabins. This React + Vite + TypeScript SPA enables hotel staff to manage bookings, guests, cabins, and internal settings through a user-friendly interface.
 
-> ⚠️ This is an internal app used only by hotel employees. Account creation is restricted to ensure access control.
+> This is an internal app used only by hotel employees. Account creation is restricted to ensure access control.
 
 ---
 
@@ -20,6 +20,17 @@
   - [React Hot Toast](https://react-hot-toast.com/) – Notifications
   - [Recharts](https://recharts.org/) – Charts & data viz
   - [date-fns](https://date-fns.org/) – Date utilities
+
+---
+
+## 🌐 Live Demo
+
+You can check out the deployed version of the app here:  
+👉 [https://woodlandbooking.netlify.app/login](https://woodlandbooking.netlify.app/login)
+
+> Note: This is an internal tool — login is restricted to authorized users.
+
+---
 
 - **State Management**
 
