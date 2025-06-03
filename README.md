@@ -77,7 +77,7 @@
   - Min/max nights per booking
   - Max guests per booking
 - Dark mode toggle
-![Dark mode](./public/screenshots/darkmode-dashboard.png)
+  ![Dark mode](./public/screenshots/darkmode-dashboard.png)
 
 ---
 
