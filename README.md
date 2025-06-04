@@ -21,6 +21,14 @@
   - [Recharts](https://recharts.org/) – Charts & data viz
   - [date-fns](https://date-fns.org/) – Date utilities
 
+- **State Management**
+
+  - React Query for async data
+  - Context API with `useState` for UI state
+
+- **Backend**
+  - [Supabase](https://supabase.io/) – Auth, DB, and storage
+
 ---
 
 ## 🌐 Live Demo
@@ -28,6 +36,7 @@
 You can check out the deployed version of the app here:  
 👉 [https://woodlandbooking.netlify.app](https://woodlandbooking.netlify.app)
 **Demo Login:** `fati@example.com` / `12345678`
+
 > Note: This is an internal tool — login is restricted to authorized users.
 
 ---
@@ -40,15 +49,6 @@ You can explore the app using the demo account:
 - **Password:** `12345678`
 
 > 🛑 This is a demo user with limited access. No real bookings or private data.
-
-
-- **State Management**
-
-  - React Query for async data
-  - Context API with `useState` for UI state
-
-- **Backend**
-  - [Supabase](https://supabase.io/) – Auth, DB, and storage
 
 ---
 
