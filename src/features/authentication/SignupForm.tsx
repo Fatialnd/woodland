@@ -85,7 +85,7 @@ const SignupForm: React.FC = () => {
         />
       </FormRow>
 
-      <FormRow label="Actions">
+      <FormRow label="">
         <Button disabled={isLoading} variation="secondary" type="reset">
           Cancel
         </Button>
