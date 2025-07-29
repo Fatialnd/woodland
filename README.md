@@ -45,8 +45,6 @@ You can check out the deployed version of the app here:
 
 You can explore the app using the demo account:
 
-- **Email:** `fati@example.com`
-- **Password:** `12345678`
 
 > 🛑 This is a demo user with limited access. No real bookings or private data.
 
