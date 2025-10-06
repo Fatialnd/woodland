@@ -31,15 +31,6 @@
 
 ---
 
-## 🌐 Live Demo
-
-You can check out the deployed version of the app here:  
-👉 [https://woodlandbooking.netlify.app](https://woodlandbooking.netlify.app)
-**Demo Login:** `fati@example.com` / `12345678`
-
-> Note: This is an internal tool — login is restricted to authorized users.
-
----
 
 ## 🧪 Demo Access
 
